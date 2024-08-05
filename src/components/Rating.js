@@ -46,6 +46,7 @@ export default function Rating({ value, text, color}) {
                 : 'far fa-star'
             }></i>
         </span>
+        {text && <span>by {text}</span>}
     </div>
   )
 }
