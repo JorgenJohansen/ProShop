@@ -1,24 +1,33 @@
 import { Link, useParams } from "react-router-dom";
-import { Row, Col, Image, ListGroup, Button, Card } from "react-bootstrap";
+import { Row, Col, Image, ListGroup, Button, Card, Form } from "react-bootstrap";
 import Rating from "../components/Rating";
-import { useState, useEffect } from "react";
-import axios from 'axios';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { listProductDetails } from "../actions/productActions";
+
 
 export default function ProductPage() {
+    const [qty, setQty] = useState(1);
     const { id } = useParams();
-    const [ product, setProduct ] = useState([]);
+    const dispatch = useDispatch();
+    const productDetails = useSelector(state => state.productDetails);
+    const {loading, error, product} = productDetails;
+    
     useEffect(() => {
-        const fetchProduct = async() => {
-            const {data} = await axios.get(`/api/products/${id}`);
-            setProduct(data);
-        }
-        fetchProduct();
-    }, [id])
+        dispatch(listProductDetails(id))
+    }, [dispatch, id])
+
+    
     
     
   return (
     <div>
         <Link to="/" className="btn btn-light my-3">Go Back</Link>
+        {
+        loading ? <Loader /> : error ? <Message variant="danger">{error}</Message>
+            : 
         <Row>
             <Col md={6}>
                 <Image src={product.image} alt={product.name} fluid />
@@ -65,6 +74,7 @@ export default function ProductPage() {
                 </Card>
             </Col>
         </Row>
+        }
     </div>
 
   )
